@@ -1,6 +1,6 @@
-# vollib
+# VolLib
 
-`vollib` is a modern C++23 volatility analytics library containing robust implementations of algorithms, analytical formulae and semi-analytical results used for volatility modeling. 
+VolLib is a modern C++23 volatility analytics library containing robust implementations of algorithms, analytical formulae and semi-analytical results used for volatility modeling. 
 
 Additionally, it also offers implementations of the core blocks one needs for such tasks - optimizers, fourier transforms, characteristic functions, FFT etc.
 
