@@ -8,6 +8,15 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 include(FetchContent)
 find_package(Python3 COMPONENTS Interpreter Development.Module Development.Embed REQUIRED)
 
+find_package(Doxygen OPTIONAL_COMPONENTS dot)
+
+if(DOXYGEN_FOUND)
+    doxygen_add_docs(docs
+        ${CMAKE_SOURCE_DIR}/VolLib_Cpp
+        COMMENT "Generating documentation"
+    )
+endif()
+
 # Fetch pybind11
 FetchContent_Declare(
     pybind11
