@@ -54,6 +54,12 @@ For a curve to be continous at any given knot-point $c$, whether we approach it 
 
 \section{Construction of the Cubic Spline}
 
+To construct the cubic spline interpolant on a grid $\Delta$ divided into $n$ subintervals, we require $n$ segments $S_0, S_1, \ldots, S_{n-1}$. In line, with condition (1), the segment $S_j$ is a cubic polynomial of the form:
 
+$$
+S_j(x) = a_j + b_j(x - x_j) + c_j(x - x_j)^2 + d_j(x - x_j)^3
+$$
+
+and has $4$ constants. Therefore, we have to determine the values of $4n$ constants.
  
 \end{document}
