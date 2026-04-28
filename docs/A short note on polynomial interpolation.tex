@@ -1,0 +1,133 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[margin=2cm]{geometry}
+
+% No paragraph indentation
+\setlength{\parindent}{0pt}
+
+% 2 lines of spacing between paragraphs
+\setlength{\parskip}{0.5\baselineskip}
+
+% Definition-style (plain vs definition style)
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\title{A short note on polynomial interpolation}
+\author{Quasar Chunawala}
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+Interpolation is the methodology of constructing new points between known data points. We often confront situations where only a limited amound of data is accessible and it is necessary to estimate values between two consecutive data points. In finance, as only a finite set of instruments are traded in financial markets, it plays a key role to construct a sensible curve or surface from discrete observable quantities. 
+
+\section{Splines}
+
+We start by formally defining a spline function of degree $k - 1 \geq 0$. 
+
+\begin{definition}
+    A spline function $S(x)$ of degree $k - 1 \geq 0$ on a grid: 
+    $$
+    \Delta = \{a = x_0 < x_1 < \ldots < x_n = b\}
+    $$
+    of distinct knots is a real function with the following properties:
+    \begin{enumerate}
+        \item For $x \ in [x_i, x_{i+1}]$, $S(x)$  is a polynomial of degree $< k$.
+        \item Its first $k - 2$ derivatives are continuous, that is $S(x) \in C^{k-2}[a,b]$.
+    \end{enumerate}
+\end{definition}
+
+The space of all spline functions of degree $k - 1 \geq 0$ is denoted by $S_{\Delta,k}$. From the definition, it follows that if $S_1(x)$ and $S_2(x)$ are spline functions, so is $c_1 S_1(x) + c_2 S_2(x)$. Clearly, $S_{\Delta, k}$ is a linear vector space. 
+
+\section{Cubic Spline Interpolant}
+
+A cubic spline uses cubic polynomials of degree $3$ to interpolate between successive knots. A subic spline interpolant $S(x)$ satisfies the following conditions:
+
+1. Each piece or segment $S_j(x)$ on the interval $[x_j, x_{j+1}]$ is a cubic polynomial.
+
+2. $S_j(x_j) = y_j$ for each $j = 0, 1, \ldots, n$.
+
+3. $S_j(x_{j+1}) = S_{j+1}(x_{j + 1})$, $S_j'(x_{j+1}) = S_{j+1}'(x_{j+1})$ and $S_j''(x_{j+1}) = S_{j+1}''(x_{j+1})$.
+
+Condition (3) is just a translation of the requirement that the whole spline should be $k-2$ times differentiable and these derivatives must be continuous. As a crude approximation, we know that a continuous curve is one that can be drawn without lifting pen from paper. The individul segments of $S(x)$ are cubics, so they are continuous themselves. The only consideration is the continuity at knot points.
+
+For a curve to be continous at any given knot-point $c$, whether we approach it from the left or we approach it from the right, the spline funtion $S(x)$ must approach $S(c)$ regardless. Suppose the left piece is $S_j$ and the right piece is $S_{j+1}$. This motivates $S_j(x_{j + 1}) = S_{j + 1}(x_{j + 1})$. A similar argument follows for the first and second derivatives because we would like those to be continous.
+
+\section{Construction of the Cubic Spline}
+
+To construct the cubic spline interpolant on a grid $\Delta$ divided into $n$ subintervals, we require $n$ segments $S_0, S_1, \ldots, S_{n-1}$. In line, with condition (1), the segment $S_j$ is a cubic polynomial of the form:
+
+\begin{align}
+S_j(x) = a_j + b_j(x - x_j) + c_j(x - x_j)^2 + d_j(x - x_j)^3
+\end{align}
+
+and has $4$ constants. Therefore, we have to determine the values of $4n$ constants. The first and second derivatives of $S_j(x)$ are given by:
+
+\begin{align}
+    S_j'(x) &= b_j + 2c_j(x - x_j) + 3d_j(x - x_j)^2
+    S_j''(x) &= 2c_j + 6d_j(x - x_j)
+\end{align}
+ 
+So, $S_{j+1}(x_{j+1}) = a_{j+1}$. $S_{j+1}'(x_{j+1}) = b_{j+1}$ and $S_{j+1}''(x_{j+1}) = 2c_{j+1}$.
+
+Also, the quantity $(x_{j+1} - x_j)$ appears so often, we let $h_j = (x_{j+1} - x_j)$. Applying conditions (2) and (3), we obtain:
+
+\begin{align}
+S_{j+1}(x_{j+1}) = a_{j+1} = y_{j+1} &= S_{j}(x_{j+1})
+= a_j + b_j h_j + c_j h_j^2 + d_j h_j^3        
+\end{align}
+\begin{align}
+    S_{j+1}'(x_{j+1}) = b_{j+1} = S_{j}'(x_{j+1}) = b_j + 2c_jh_j + 3d_jh_j^2
+\end{align}
+\begin{align}
+    (1/2)S_{j+1}''(x_{j+1}) = c_{j+1} = (1/2)S_j''(x_{j+1}) = c_j + 3d_j h_j
+\end{align}
+
+for each $j=0,1,\ldots,n-1$. 
+
+Solving for $d_j$ in equation (5), and substituting this value in equations (3) and (4) gives, for each $j=0,1,\ldots,n-2$, the new equations:
+\begin{equation}
+    \begin{split}
+        a_{j+1} &= a_j + b_j + c_j h_j^2 + \left(\frac{c_{j+1} - c_j}{3h_j}\right)h_j^3\\
+        &=  a_j + b_j + c_j h_j^2 - c_j\frac{h_j^2}{3} + \frac{h_j^2}{3} c_{j+1}\\
+        &=  a_j + b_j + c_j h_j^2 + \frac{h_j^2}{3}(2c_j + c_{j+1})
+    \end{split}
+\end{equation}
+\begin{equation}
+    \begin{split}
+        b_{j+1} &= b_j + 2c_jh_j + 3\left(\frac{c_{j+1} - c_j}{3h_j}\right)h_j^2\\
+        &= b_j + 2c_jh_j + (c_{j+1} - c_j)h_j\\
+        &= b_j + (c_j + c_{j+1})h_j
+    \end{split}
+\end{equation}
+
+The final relationship is obtained by solving equation (6) first for $b_j$:
+
+\begin{equation}
+    \begin{split}
+        b_j = \frac{1}{h_j}(a_{j+1} - a_j) - \frac{h_j}{3}(2c_j + c_{j+1})
+    \end{split}
+\end{equation}
+and then with a reduction of the index, for $b_{j-1}$ gives:
+\begin{align}
+    b_{j-1} = \frac{1}{h_{j-1}}(a_j - a_{j-1}) - \frac{h_{j-1}}{3}(2c_j + c_{j+1})
+\end{align}
+Substituting these values into the equation derived from(7), with the index reduced by one gives the linear system of equations:
+\begin{equation}
+    \begin{split}
+    b_j &= b_{j-1} + (c_{j-1} + c_j)h_{j-1}\\
+    \frac{1}{h_j}(a_{j+1} - a_j) - \frac{h_j}{3}(2c_j + c_{j+1}) &= \frac{1}{h_{j-1}}(a_{j} - a_{j-1}) - \frac{h_{j-1}}{3}(2c_{j-1} + c_{j}) + (c_{j-1} + c_j)h_{j-1}\\
+    \frac{1}{h_j}(a_{j+1} - a_j) - \frac{1}{h_{j-1}}(a_{j} - a_{j-1}) &= \frac{h_j}{3}(2c_j + c_{j+1})- \frac{h_{j-1}}{3}(2c_{j-1} + c_{j}) + (c_{j-1} + c_j)h_{j-1}\\
+    \frac{3}{h_j}(a_{j+1} - a_j) - \frac{3}{h_{j-1}}(a_{j} - a_{j-1}) &= 2c_jh_j + c_{j+1}h_j - 2c_{j-1}h_{j-1} - c_j h_{j-1} + 3c_{j-1}h_{j-1} + 3c_j h_{j-1}\\
+    \frac{3}{h_j}(a_{j+1} - a_j) - \frac{3}{h_{j-1}}(a_{j} - a_{j-1}) &= 2c_jh_j + c_{j+1}h_j + c_{j-1}h_{j-1} + 2c_j h_{j-1}\\
+    \frac{3}{h_j}(a_{j+1} - a_j) - \frac{3}{h_{j-1}}(a_{j} - a_{j-1}) &= c_{j+1}h_j + 2h_j(c_j + c_{j-1}) + c_{j-1}h_{j-1}\\
+    \end{split}
+\end{equation}
+
+for each $j=1,2,\ldots,n-1$. This system involes only the $\{c_j\}_{j=0}^n$ unknowns. The values of $\{h_j\}_{j=0}^n$ and $\{a_j\}_{j=0}^n$ are given respectively by the spacing of the knots $\{x_j\}_{j=0}^n$ and the values $\{y_j\}_{j=0}^n$ at the knot-points. Once the values of $\{c_j\}_{j=0}^n$ are determined, it is a simple task to find the remainder of the constants $\{b_j\}_{j=0}^n$ and $\{d_j\}_{j=0}^b$ from the equations (5) and (7).
+
+
+\end{document}
