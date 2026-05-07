@@ -1,0 +1,75 @@
+%% LyX 2.4.2.1 created this file.  For more info, see https://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[american]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[skip=\medskipamount]{parskip}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[a4paper]{geometry}
+\geometry{verbose,tmargin=2cm,bmargin=2cm,lmargin=2cm,rmargin=2cm}
+\usepackage{babel}
+\begin{document}
+\title{A short note on Variance Swaps}
+\author{Quasar Chunawala}
+\date{07-May-2026}
+\maketitle
+\begin{abstract}
+A short note on Variance Swaps and volatility derivatives
+\end{abstract}
+
+\section*{Replicating a twice-differentiable payoff with a static position
+in vanilla options}
+
+Any twice differentiable payoff $g(S_{T})$ at time $T$ may be replicated
+using a static portfolio of European options expiring at time $T$.
+
+From the Breeden-Litzenberger formula, we know that we may write the
+\textit{pdf }of the stock-price $S_{T}$ as:
+
+\begin{equation}
+p(S_{T},T;S_{t},t)=\left.\frac{\partial^{2}\tilde{C}(K,T,S_{t},t)}{\partial K^{2}}\right|_{K=S_{T}}=\left.\frac{\partial^{2}\tilde{P}(K,T,S_{t},t)}{\partial K^{2}}\right|_{K=S_{T}}
+\end{equation}
+
+where $\tilde{C}$ and $\tilde{P}$ represent the undiscounted call
+and put prices respectively. 
+
+Then, the value of a claim with a generalized payoff $g(S_{T})$ at
+time $T$ is given by:
+
+\begin{align*}
+\mathbb{E}\left[g(S_{T})|S_{t}\right] & =\int_{0}^{\infty}\underbrace{p(K,T|S_{t},t)}_{\text{Transition probability}}\times g(K)dK
+\end{align*}
+
+For any payoff $g(S_{T})$, the sifting property of a Dirac-delta
+function implies that:
+
+\begin{align*}
+Ig(S_{T}) & =\int_{0}^{\infty}g(K)\delta(S_{T}-K)dK\\
+ & =\int_{0}^{F}g(K)\delta(S_{T}-K)dK+\int_{F}^{\infty}g(K)\delta(S_{T}-K)dK
+\end{align*}
+
+In particular, the dirac-delta function has symmetry. $\delta(x)=\delta(-x)$.
+The Heaviside step function $\theta(x)=\int_{-\infty}^{x}\delta(y)dy$.
+The Heaviside function satisfies $\theta(x)=-\theta(-x)$. Thus,
+
+\begin{align*}
+\delta(K-S_{T}) & =\frac{\partial}{\partial K}\theta(K-S_{T})=-\frac{\partial}{\partial K}\theta(S_{T}-K)=
+\end{align*}
+
+We integrate each integrand by parts. The first integral simplifies
+to:
+
+\begin{align*}
+\int_{0}^{F}g(K)\delta(S_{T}-K)dK & =\left[g(K)\left(\int\delta(S_{T}-K)dK\right)\right]_{K=0}^{K=F}-\int_{0}^{F}g'(K)\left(\int\delta(S_{T}-K)dK\right)dK\\
+\\\\\\
+\end{align*}
+
+The second integral simplifies to:
+
+\begin{align*}
+\int_{F}^{\infty}g(K)\delta(K-S_{T})dK & =\left[g(K)\int\delta(S_{T}-K)dK\right]_{K=F}^{K=\infty}-\int_{0}^{F}\left(\int\delta(S_{T}-K)dK\right)g'(K)dK\\
+\\
+\end{align*}
+
+\end{document}

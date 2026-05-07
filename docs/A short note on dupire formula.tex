@@ -1,0 +1,200 @@
+%% LyX 2.4.2.1 created this file.  For more info, see https://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[american]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[skip=\medskipamount]{parskip}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage[a4paper]{geometry}
+\geometry{verbose,tmargin=2cm,bmargin=2cm,lmargin=2cm,rmargin=2cm}
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+\newcommand{\noun}[1]{\textsc{#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+\theoremstyle{plain}
+\newtheorem{prop}{\protect\propositionname}
+
+\makeatother
+
+\usepackage{babel}
+\providecommand{\propositionname}{Proposition}
+
+\begin{document}
+\title{A short note on Dupire's formula}
+\author{Quasar Chunawala}
+\date{04-October-2025}
+\maketitle
+\begin{abstract}
+A short note on Dupire's formula
+\end{abstract}
+
+\section*{The Dupire Equation}
+
+For each strike $K$ and maturity $T$, we need to solve backward
+parabolic \noun{Black-Scholes PDE} in the variables $(S,t)$, to find
+the option prices. It is possible to find the same option price by
+solving a dual problem, namely a forward equation in the variables
+$(K,T)$, given the present spot value and time known as the \emph{dual
+Black-Scholes equation }or \noun{Dupire's PDE}.
+
+It is not straight-forward to understand how to extract a surface
+$\sigma_{LV}$ from the market. Dupire succeeded to prove that assuming
+a continuum of traded plain vanilla options on the market, there exists
+one and only one local volatility surface $\sigma_{LV}$ (a unique
+diffusion process) such that model is perfectly able to reproduce
+the current market prices.
+
+\section*{Derivation of the Dupire's Formula}
+\begin{prop}
+(Dupire's Equation) The value of a call option as a function of the
+strike price $K$ and the time to maturity $T$ given the present
+value of the stock $S$ is given by the following forward parabolic
+equation known as the Dupire's equation:
+\end{prop}
+Suppose that the stock price diffuses with the risk-neutral drift
+$\mu_{t}=r-q$ and local volatility $\sigma(S,t)$ according to the
+dynamics:
+
+\begin{equation}
+dS_{t}=\mu S_{t}dt+\sigma(S_{t},t)S_{t}dB_{t}\label{eq:stock_diffusion}
+\end{equation}
+
+Suppose the stock price today at $t=0$ is $S_{0}$. Consider the
+collection of undiscounted option prices of options struck at $K$
+and expiration $T$, $\{C(S_{0},K,T)\}$. It is given by:
+
+\begin{equation}
+C(S_{0},K,T)=\int_{\mathbb{R}}(S_{T}-K)^{+}p(S_{T},T|S_{0},0)dS_{T}\label{eq:undiscounted_option_price}
+\end{equation}
+
+which is an expectation over the state space of $S_{T}$ and $p(S_{T},T|S_{0},0)$
+is the transition probability density from state $(S_{0},0)$ to state
+$(S_{T},T)$.
+
+The probability density $p(S_{T},T|S_{0},0)$ satisfies the Fokker-Planck
+equation (forward PDE):
+
+\begin{equation}
+\begin{aligned}\frac{\partial p_{T}}{\partial T} & =A^{*}p_{T}\end{aligned}
+\end{equation}
+
+where $A^{*}$ is the adjoint of the generator of the diffusion $(S_{t},t\geq0)$.
+In other words:
+
+\begin{equation}
+\begin{aligned}\frac{\partial p}{\partial T} & =\frac{1}{2}\frac{\partial^{2}}{\partial S_{T}^{2}}(\sigma(S_{T})^{2}S_{T}^{2}p)-\frac{\partial}{\partial S_{T}}((r-q)S_{T}p)\end{aligned}
+\end{equation}
+
+Differentiating (\ref{eq:undiscounted_option_price}) with respect
+to $K$ gives:
+
+\begin{align}
+\frac{\partial C}{\partial K} & =\frac{\partial}{\partial K}\left(\int_{\mathbb{R}}(S_{T}-K)^{+}p(S_{T},T|S_{0})dS_{T}\right)\nonumber \\
+ & =\frac{\partial}{\partial K}\left(\int_{K}^{\infty}(S_{T}-K)p(S_{T},T|S_{0})dS_{T}\right)\nonumber \\
+ & =\frac{\partial}{\partial K}\left(\int_{\alpha(K)}^{\beta(K)}f(S_{T},K)dS_{T}\right)\nonumber \\
+ & =\underbrace{f(\beta(K),K)\beta'(K)}_{\lim_{\beta(K)\to\infty}p(\beta(K),T)=0}-\underbrace{f(\alpha(K),K)\alpha'(K)}_{f(\alpha(K),K)=(K-K)p(K,T)=0}+\int_{\alpha(K)}^{\beta(K)}\frac{\partial}{\partial K}(f(S_{T},K))dS_{T}\nonumber \\
+ & =\int_{K}^{\infty}\frac{\partial}{\partial K}(S_{T}-K)p(S_{T},T|S_{0})dS_{T}\nonumber \\
+ & =-\int_{K}^{\infty}p(S_{T},T|S_{0})dS_{T}\label{eq:partial_wrt_K}
+\end{align}
+
+Differentiating again with respect to $K$, we have:
+
+\begin{align}
+\frac{\partial^{2}C}{\partial K^{2}} & =-\frac{\partial}{\partial K}\int_{K}^{\infty}p(S_{T},T|S_{0})dS_{T}\nonumber \\
+ & =-\left[\underbrace{p(\beta(K),T)\beta'(K)}_{0}-p(\alpha(K),T)\alpha'(K)+\int_{K}^{\infty}\underbrace{\frac{\partial}{\partial K}p(S_{T},T)}_{0}dS_{T}\right]\nonumber \\
+ & =p(K,T)
+\end{align}
+
+Now, differentiating the undiscounted option price in (\ref{eq:undiscounted_option_price})
+with respect to $T$, yields:
+
+\begin{align}
+\frac{\partial C}{\partial T} & =\frac{\partial}{\partial T}\left(\int_{K}^{\infty}(S_{T}-K)p(S_{T},T|S_{0},0)dS_{T}\right)\nonumber \\
+ & =\int_{K}^{\infty}(S_{T}-K)\left\{ \frac{\partial}{\partial T}(p(S_{T},T|S_{0},0))\right\} dS_{T}\nonumber \\
+ & =\int_{K}^{\infty}(S_{T}-K)\left\{ \frac{1}{2}\frac{\partial^{2}}{\partial S_{T}^{2}}(\sigma(S_{T})^{2}S_{T}^{2}p_{T}(S_{T},T|S_{0},0))-\frac{\partial}{\partial S_{T}}((r-q)S_{T}p_{T}(S_{T},T|S_{0},0))\right\} dS_{T}\\
+ & =-(r-q)I_{1}+\frac{1}{2}I_{2}\label{eq:pde}
+\end{align}
+
+where the short notation $I_{1}$ and $I_{2}$ is introduced for the
+integrals in the last-but-one line.
+
+\subsection*{First identity}
+
+From the definition of the Call option price, we have:
+
+\begin{align*}
+C & =\int_{K}^{\infty}(S_{T}-K)p_{T}(S_{T},T|S_{0},0)dS_{T}
+\end{align*}
+
+On the other hand from equation (\ref{eq:partial_wrt_K}), we have:
+
+\begin{align*}
+\frac{\partial C}{\partial K} & =-\int_{K}^{\infty}p(S_{T},T|S_{0},0)dS_{T}
+\end{align*}
+
+So, 
+
+\begin{align}
+C-K\frac{\partial C}{\partial K} & =\int_{K}^{\infty}(S_{T}-K)p_{T}(S_{T},T|S_{0},0)+Kp_{T}(S_{T},T|S_{0},0)dS_{T}\nonumber \\
+ & =\int_{K}^{\infty}S_{T}p(S_{T},T|S_{0},0)dS_{T}\label{eq:identity_1}
+\end{align}
+
+
+\subsection*{Evaluating the integrals $I_{1}$ and $I_{2}$}
+
+We can now proceed with evaluating the integrals $I_{1}$ and $I_{2}$.
+For $I_{1},$ using integration by parts, we get:
+
+\begin{align}
+I_{1} & =\int_{K}^{\infty}(S_{T}-K)\frac{\partial}{\partial S_{T}}(S_{T}p(S_{T},T|S_{0},0))dS_{T}\nonumber \\
+ & =\left[(S_{T}-K)S_{T}p(S_{T},T|S_{0},0)\right]_{K}^{\infty}-\int_{K}^{\infty}S_{T}p(S_{T},T|S_{0},0)\frac{\partial}{\partial S_{T}}(S_{T}-K)\cdot dS_{T}\nonumber \\
+ & =-\int_{K}^{\infty}S_{T}p(S_{T},T|S_{0},0)dS_{T}\nonumber \\
+ & =K\frac{\partial C}{\partial K}-C\label{eq:i_1}
+\end{align}
+
+where in the last line, we used the result from (\ref{eq:identity_1}).
+
+For $I_{2}$, using integration by parts, we obtain:
+
+\begin{align*}
+I_{2} & =\int_{K}^{\infty}(S_{T}-K)\frac{\partial^{2}}{\partial S_{T}^{2}}[\sigma^{2}S_{T}^{2}p(S_{T},T|S_{0},0)]dS_{T}\\
+ & =\left[(S_{T}-K)\frac{\partial}{\partial S_{T}}[\sigma(S_{T},T)^{2}S_{T}^{2}p(S_{T},T|S_{0},0)]\right]_{K}^{\infty}-\int_{K}^{\infty}\frac{\partial}{\partial S_{T}}[\sigma(S_{T},T)^{2}S_{T}^{2}p(S_{T},T|S_{0},0)]dS_{T}
+\end{align*}
+
+It is assumed that first term evaluates to $0$; whereas for the second
+term, observe that differentiation and integration are inverse operations.
+So:
+
+\begin{align}
+I_{2} & =-\left[\sigma(S_{T},T)^{2}S_{T}^{2}p(S_{T},T|S_{0},0)\right]_{K}^{\infty}\nonumber \\
+ & =\sigma(K,T)^{2}K^{2}p(K,T|S_{0},0)\nonumber \\
+ & =\sigma(K,T)^{2}K^{2}\frac{\partial^{2}C}{\partial K^{2}}\label{eq:i_2}
+\end{align}
+
+
+\subsection*{The final step}
+
+Substituting $I_{1}$ and $I_{2}$ into (\ref{eq:pde}), we have the
+Dupire PDE:
+
+\begin{align}
+\frac{\partial C}{\partial T} & =-(r-q)\left(K\frac{\partial C}{\partial K}-C\right)+\frac{1}{2}\sigma(K,T)^{2}\frac{\partial^{2}C}{\partial K^{2}}\label{eq:dupire_pde}
+\end{align}
+
+The equation can also be solved for the local volatility $\sigma(S_{t},t)$
+at the point $(K,T)$:
+
+\begin{align*}
+\sigma^{2}(K,T) & =\frac{\frac{\partial C}{\partial T}+(r-q)\left(K\frac{\partial C}{\partial K}-C\right)}{\frac{1}{2}K^{2}\frac{\partial^{2}C}{\partial K^{2}}}
+\end{align*}
+
+The right-hand side of this equation can be computed from known European
+option prices. So, given a complete set of European option prices
+for all strikes and expirations, local volatilities are uniquely given
+by the above equation.
+\end{document}
